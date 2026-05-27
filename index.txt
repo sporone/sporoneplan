@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spor.One - İnteraktif Planlama Matrisi</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#4F46E5', // Indigo 600
+                        'primary-dark': '#4338CA',
+                        secondary: '#10B981', // Emerald 500
+                        dark: '#0F172A', // Slate 900
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #F8FAFC;
+        }
+        .view-section {
+            display: none;
+            animation: fadeIn 0.2s ease-in-out;
+        }
+        .view-section.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(2px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Özel Kaydırma Çubuğu (Scrollbar) */
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 10px;
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #F1F5F9;
+            border-radius: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94A3B8;
+        }
+
+        /* Sticky kolonlar için border birleşme sorunlarını çözen özel CSS */
+        .sticky-col {
+            position: sticky !important;
+            box-shadow: 2px 0 5px -2px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased flex h-screen overflow-hidden bg-[#F8FAFC]">
+
+    <!-- SOL SİDEBAR MENU -->
+    <aside class="w-80 bg-dark text-white flex flex-col shadow-2xl z-30 shrink-0 border-r border-slate-800">
+        <!-- Logo ve Başlık -->
+        <div class="h-20 flex items-center px-6 border-b border-slate-800 gap-4 shrink-0">
+            <div class="bg-primary text-white p-2 rounded-xl shadow-lg shadow-primary/30">
+                <i class="ph-bold ph-calendar text-2xl"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-xl tracking-tight leading-none">Spor.One</h1>
+                <span class="text-[10px] text-gray-400 font-semibold uppercase tracking-wider">İçerik Yönetim Paneli</span>
+            </div>
+        </div>
+        
+        <!-- Menü Başlığı -->
+        <div class="px-6 py-4 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+            Yönetim Araçları
+        </div>
+        
+        <!-- Gezinme Menüsü -->
+        <nav class="flex-1 px-4 space-y-1.5 overflow-y-auto">
+            <button onclick="switchView('view-dashboard')" class="nav-btn w-full flex items-center justify-between px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all text-left" data-target="view-dashboard">
+                <div class="flex items-center gap-3.5">
+                    <i class="ph-fill ph-chart-pie-slice text-xl"></i>
+                    <span class="font-medium text-sm">Genel Özet</span>
+                </div>
+            </button>
+            <button onclick="switchView('view-matrix')" class="nav-btn w-full flex items-center justify-between px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all text-left" data-target="view-matrix">
+                <div class="flex items-center gap-3.5">
+                    <i class="ph-fill ph-grid-nine text-xl"></i>
+                    <span class="font-medium text-sm">Planlama Matrisi</span>
+                </div>
+                <span class="bg-amber-500/10 text-amber-500 text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-500/20">Excel</span>
+            </button>
+            <button onclick="switchView('view-logs')" class="nav-btn w-full flex items-center justify-between px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all text-left" data-target="view-logs">
+                <div class="flex items-center gap-3.5">
+                    <i class="ph-fill ph-activity text-xl"></i>
+                    <span class="font-medium text-sm">İşlem Logları</span>
+                </div>
+            </button>
+        </nav>
+
+        <!-- Kullanıcı Profili -->
+        <div class="p-6 border-t border-slate-800 shrink-0 bg-slate-950/40">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary to-indigo-400 flex items-center justify-center text-white font-bold text-sm shadow-md shadow-primary/20">
+                    ADM
+                </div>
+                <div class="min-w-0">
+                    <p class="text-sm font-semibold truncate">Sistem Yöneticisi</p>
+                    <p class="text-xs text-slate-400 truncate">admin@spor.one</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ANA İÇERİK ALANI -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+        
+        <!-- Üst Bar (Header) -->
+        <header class="h-20 bg-white border-b border-slate-200 flex justify-between items-center px-8 shrink-0 z-10">
+            <div class="flex items-center gap-3">
+                <h2 class="text-2xl font-bold text-slate-800 tracking-tight" id="header-title">Özet Ekranı</h2>
+                <div class="hidden md:flex items-center gap-1.5 text-xs text-slate-500 bg-slate-100 py-1 px-2.5 rounded-lg font-medium">
+                    <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                    Sheet Bağlantısı Aktif
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <!-- Tarih Widget -->
+                <div class="text-sm text-slate-600 font-medium bg-slate-50 border border-slate-200 px-4 py-2 rounded-xl flex items-center gap-2">
+                    <i class="ph-bold ph-calendar-blank text-primary text-base"></i>
+                    <span id="header-date">--</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Ekranlar (Views) -->
+        <main class="flex-1 overflow-y-auto p-8 relative" id="main-container">
+
+            <!-- 1. GENEL ÖZET (DASHBOARD) -->
+            <section id="view-dashboard" class="view-section active max-w-7xl mx-auto space-y-8">
+                
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Hoş Geldiniz 👋</h2>
+                        <p class="text-slate-500 mt-1">İçerik planlama matrisinizdeki 18 aktif hesabı ve yayın süreçlerini buradan yönetin.</p>
+                    </div>
+                    <button onclick="switchView('view-matrix')" class="bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-6 rounded-xl shadow-lg shadow-indigo-200 flex items-center gap-2 transition-all hover:-translate-y-0.5 active:translate-y-0">
+                        <i class="ph-bold ph-grid-nine text-lg"></i>
+                        Matrisi Aç ve Düzenle
+                    </button>
+                </div>
+
+                <!-- İstatistik Kartları -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="bg-indigo-50 text-primary p-3 rounded-xl"><i class="ph-fill ph-users-three text-2xl"></i></div>
+                            <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">18 Kulüp</span>
+                        </div>
+                        <div class="text-3xl font-bold text-slate-800">18</div>
+                        <div class="text-sm text-slate-500 font-medium mt-1">Aktif Planlanan Hesap</div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="bg-amber-50 text-amber-600 p-3 rounded-xl"><i class="ph-fill ph-calendar text-2xl"></i></div>
+                            <span class="text-xs font-semibold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full">31 Gün</span>
+                        </div>
+                        <div class="text-3xl font-bold text-slate-800">27.05 - 26.06</div>
+                        <div class="text-sm text-slate-500 font-medium mt-1">Planlama Dönemi</div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="bg-emerald-50 text-emerald-600 p-3 rounded-xl"><i class="ph-fill ph-check-square-offset text-2xl"></i></div>
+                            <span class="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">%82 Oran</span>
+                        </div>
+                        <div class="text-3xl font-bold text-slate-800">412</div>
+                        <div class="text-sm text-slate-500 font-medium mt-1">Planlanmış Toplam Gönderi</div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm font-semibold text-slate-600">Genel Tamamlanma Oranı</span>
+                            <span class="text-lg font-bold text-emerald-600">82%</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-3">
+                            <div class="bg-emerald-500 h-3 rounded-full" style="width: 82%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bilgi / Hızlı İpucu Kartı -->
+                <div class="bg-indigo-900 text-indigo-100 rounded-2xl p-6 shadow-xl relative overflow-hidden flex items-center justify-between">
+                    <div class="space-y-2 z-10 relative">
+                        <h3 class="text-lg font-bold">Nasıl Planlama Yapılır?</h3>
+                        <p class="text-indigo-200 text-sm max-w-2xl">Matris ekranında, her bir tarih sütunundaki hücreye tıklayarak hızlıca planlanmış/planlanmamış içerik durumunu değiştirebilirsiniz. Değişiklikleriniz anında mavi şeritlerle güncellenir.</p>
+                    </div>
+                    <i class="ph ph-magic-wand text-8xl text-indigo-800/50 absolute right-4 top-1/2 transform -translate-y-1/2 select-none pointer-events-none"></i>
+                </div>
+            </section>
+
+            <!-- 2. İNTERAKTİF PLANLAMA MATRİSİ (SPREADSHEET VIEW) -->
+            <section id="view-matrix" class="view-section space-y-4">
+                
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-4 justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-indigo-50 text-indigo-700 p-2.5 rounded-xl font-bold text-sm flex items-center gap-2 border border-indigo-100">
+                            <i class="ph ph-sparkles text-lg"></i>
+                            Modern Görünüm Aktif
+                        </div>
+                        <p class="text-sm text-slate-500 font-medium">
+                            Planlamak istediğiniz güne tıklayın. Hafta sonları yumuşak şading ile ayrılmıştır. Kaydet butonuyla Google Sheet senkronizasyonu yapabilirsiniz.
+                        </p>
+                    </div>
+                    
+                    <div class="flex items-center gap-3 w-full md:w-auto">
+                        <!-- Arama -->
+                        <div class="relative w-full md:w-72">
+                            <i class="ph ph-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                            <input type="text" id="matrix-search" oninput="filterMatrix()" placeholder="Kulüp veya branş ara..." class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 pl-9 pr-3 text-sm focus:outline-none focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
+                        </div>
+                        
+                        <!-- Kaydet Butonu -->
+                        <button id="btn-save-matrix" onclick="saveMatrixData()" class="bg-primary hover:bg-primary-dark text-white font-semibold py-2 px-5 rounded-lg shadow-md flex items-center gap-2 text-sm shrink-0 active:scale-95 transition-transform">
+                            <i class="ph-bold ph-cloud-arrow-up text-base" id="save-icon"></i>
+                            <span id="save-text">Sheet'e Kaydet</span>
+                            <i class="ph-bold ph-spinner animate-spin text-base hidden" id="save-loader"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Excel Matris Tablo Konteyneri (Sadece İç Tablo Kaydırılır) -->
+                <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm flex flex-col max-h-[calc(100vh-250px)]">
+                    <div class="overflow-auto custom-scrollbar flex-1">
+                        <table class="w-full border-separate border-spacing-0 text-xs text-left">
+                            <thead class="bg-slate-50 sticky top-0 z-30">
+                                <tr id="matrix-header-row">
+                                    <!-- Sabit Kolonlar -->
+                                    <th class="w-12 min-w-[48px] px-3 py-4 text-center text-slate-400 font-bold border-r border-b border-slate-200 bg-slate-100 sticky left-0 z-40">#</th>
+                                    <th class="w-20 min-w-[80px] px-4 py-4 font-bold text-slate-700 uppercase tracking-wider border-r border-b border-slate-200 bg-slate-50 sticky left-12 z-40 text-center">BRANŞ</th>
+                                    <th class="w-64 min-w-[256px] px-4 py-4 font-bold text-slate-700 uppercase tracking-wider border-r border-b border-slate-200 bg-slate-50 sticky left-[132px] z-40">INSTAGRAM HESABI</th>
+                                    <th class="w-64 min-w-[256px] px-4 py-4 font-bold text-slate-700 uppercase tracking-wider border-r border-b border-slate-200 bg-[#FFFDE7] sticky left-[388px] z-40">KULÜP / TAKIM ADI</th>
+                                    
+                                    <!-- Dinamik Tarih Kolonları (JS ile Doldurulacak) -->
+                                </tr>
+                            </thead>
+                            <tbody id="matrix-rows" class="divide-y divide-slate-100">
+                                <!-- JS ile Doldurulacak -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. İŞLEM LOGLARI (LOGS VIEW) -->
+            <section id="view-logs" class="view-section max-w-7xl mx-auto space-y-6">
+                <div class="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="flex items-center gap-3">
+                        <i class="ph-fill ph-clock-counter-clockwise text-primary text-2xl"></i>
+                        <div>
+                            <p class="text-slate-800 font-bold text-lg">Sistem Hareket Kayıtları</p>
+                            <p class="text-slate-500 text-sm">Matriste yapılan son içerik ekleme ve durum güncellemeleri.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Masaüstü Veri Tablosu -->
+                <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-slate-200 text-sm text-left">
+                            <thead class="bg-slate-50 text-slate-500 uppercase text-xs font-semibold tracking-wider">
+                                <tr>
+                                    <th scope="col" class="px-6 py-4">Takım / Kulüp</th>
+                                    <th scope="col" class="px-6 py-4">İşlem Detayı</th>
+                                    <th scope="col" class="px-6 py-4">Tarih</th>
+                                    <th scope="col" class="px-6 py-4 text-right">Saat</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logs-list" class="divide-y divide-slate-100 bg-white">
+                                <!-- JS ile Doldurulacak -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Toast Bildirimi (Sağ Alt) -->
+    <div id="toast" class="fixed bottom-10 right-10 transform translate-y-10 opacity-0 bg-slate-900 text-white px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 z-50 pointer-events-none transition-all duration-300">
+        <i class="ph-fill ph-check-circle text-secondary text-2xl"></i>
+        <p class="text-base font-medium" id="toast-message">Başarıyla kaydedildi!</p>
+    </div>
+
+    <!-- JAVASCRIPT KODLARI -->
+    <script>
+        // --- 1. TARİH ARALIĞI TANIMLAMALARI ---
+        // Görseldeki tarih aralığı: 27.05.2026 - 26.06.2026 (Tam 31 gün)
+        const generateDates = () => {
+            const dates = [];
+            const weekdays = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
+            const months = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+            let current = new Date(2026, 4, 27); // 27 Mayıs 2026
+            const end = new Date(2026, 5, 26);   // 26 Haziran 2026
+            
+            while (current <= end) {
+                const dayStr = String(current.getDate()).padStart(2, '0');
+                const monthStr = String(current.getMonth() + 1).padStart(2, '0');
+                const dayOfWeekIndex = current.getDay();
+                
+                dates.push({
+                    formatted: `${dayStr}.${monthStr}`,
+                    day: dayStr,
+                    month: monthStr,
+                    monthName: months[current.getMonth()].toUpperCase(),
+                    weekday: weekdays[dayOfWeekIndex],
+                    isWeekend: dayOfWeekIndex === 0 || dayOfWeekIndex === 6 // 0: Pazar, 6: Cumartesi
+                });
+                current.setDate(current.getDate() + 1);
+            }
+            return dates;
+        };
+
+        const timelineDates = generateDates();
+
+        // --- 2. KULÜP VERİLERİ ---
+        const initialTeams = [
+            { id: 1, branch: "BASKETBOL / VOLEYBOL / CİMNASTİK", link: "fenerbahcesporokuluatasehir", club: "FB ATAŞEHİR SO", planRange: [0, 30] },
+            { id: 2, branch: "BASKETBOL / VOLEYBOL", link: "fenerbahcesporokuluumraniye", club: "FB ÜMRANİYE SO", planRange: [0, 30] },
+            { id: 3, branch: "BASKETBOL / VOLEYBOL", link: "fenerbahcesporokulukurtkoy", club: "FB KURTKÖY SO", planRange: [0, 30] },
+            { id: 4, branch: "YÜZME", link: "fbyuzmecekmekoy", club: "FB ÇEKMEKÖY YÜZME SPOR", planRange: [0, 20] },
+            { id: 5, branch: "BASKETBOL / VOLEYBOL", link: "devatasehirsporkulubu", club: "DEV ATAŞEHİR SK", planRange: [0, 1] },
+            { id: 6, branch: "BASKETBOL / VOLEYBOL", link: "devsporas", club: "DEV SPOR SK", planRange: [0, 1] },
+            { id: 7, branch: "BASKETBOL / VOLEYBOL", link: "fenerbahcebasaksehirsporokulu", club: "FB BAŞAKŞEHİR SO", planRange: [0, 14] },
+            { id: 8, branch: "BASKETBOL / VOLEYBOL", link: "sancaktepefenerbahce", club: "FB SANCAKTEPE SO", planRange: [0, 1] },
+            { id: 9, branch: "BASKETBOL / VOLEYBOL", link: "fenerbahcecekmekoy", club: "FB ÇEKMEKÖY SO", planRange: [0, 18] },
+            { id: 10, branch: "FUTBOL", link: "atasehirfenerbahcefutbolokulu", club: "FB ATAŞEHİR FUTBOL SO", planRange: [0, 14] },
+            { id: 11, branch: "BASKETBOL / VOLEYBOL", link: "devadimsporkulubu", club: "DEV ADIM SK", planRange: [0, 1] },
+            { id: 12, branch: "VOLEYBOL", link: "fbvoleyboluskudar", club: "FB ÜSKÜDAR", planRange: [0, 18] },
+            { id: 13, branch: "VOLEYBOL", link: "bogaziciakademivoleybol", club: "BOGAÇİÇİ SK VOLEYBOL", planRange: [0, 20] },
+            { id: 14, branch: "VOLEYBOL", link: "gsusudarvoleybolokulu", club: "GALATASARAY BULGURLU VOL", planRange: [0, 14] },
+            { id: 15, branch: "BASKETBOL / VOLEYBOL / CİMNASTİK", link: "trendistanbulsporkulubu", club: "TREND İSTANBUL SK", planRange: [0, 18] },
+            { id: 16, branch: "BASKETBOL", link: "beylikduzu.sk", club: "BEYLİKDÜZÜ BASKETBOL SK", planRange: [0, 1] },
+            { id: 17, branch: "BASKETBOL / VOLEYBOL", link: "saydamakademisk", club: "SAYDAM AKADEMİ SK", planRange: [0, 14] },
+            { id: 18, branch: "BASKETBOL / VOLEYBOL", link: "HESABA KENDİ BAKIYOR", club: "KIZILTOPRAK SK", planRange: [0, 1] }
+        ];
+
+        // Her bir hücre için aktiflik/planlılık durumunu tutacak dizi oluştur
+        const matrixData = initialTeams.map(t => {
+            const planStates = Array(timelineDates.length).fill(false);
+            for (let i = t.planRange[0]; i <= t.planRange[1]; i++) {
+                if(i < planStates.length) planStates[i] = true;
+            }
+            return {
+                ...t,
+                planStates
+            };
+        });
+
+        const logsData = [
+            { team: "FB ATAŞEHİR SO", action: "Planlama başlatıldı", time: "10:45", date: "27 Mayıs 2026" },
+            { team: "FB ÇEKMEKÖY YÜZME SPOR", action: "Haziran 15 sonrası boşaltıldı", time: "09:12", date: "27 Mayıs 2026" },
+            { team: "DEV ATAŞEHİR SK", action: "Planlama güncellendi", time: "08:30", date: "27 Mayıs 2026" }
+        ];
+
+        // --- 3. BAŞLANGIÇ AYARLARI ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('header-date').textContent = new Date(2026, 4, 27).toLocaleDateString('tr-TR', options);
+            
+            buildMatrixHeaders();
+            renderMatrixRows(matrixData);
+            renderLogs();
+            switchView('view-dashboard');
+        });
+
+        // --- 4. EKRAN GEÇİŞ YÖNETİMİ ---
+        function switchView(viewId) {
+            document.querySelectorAll('.view-section').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.getElementById(viewId).classList.add('active');
+            updateNavUI(viewId);
+            document.getElementById('main-container').scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateNavUI(activeTarget) {
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                if (btn.dataset.target === activeTarget) {
+                    btn.classList.add('bg-primary', 'text-white', 'shadow-md');
+                    btn.classList.remove('text-slate-400', 'hover:bg-slate-800/60');
+                } else {
+                    btn.classList.add('text-slate-400', 'hover:bg-slate-800/60');
+                    btn.classList.remove('bg-primary', 'text-white', 'shadow-md');
+                }
+            });
+
+            const titles = {
+                'view-dashboard': 'Özet Ekranı',
+                'view-matrix': 'İnteraktif Planlama Matrisi',
+                'view-logs': 'Sistem İşlem Geçmişi'
+            };
+            document.getElementById('header-title').textContent = titles[activeTarget] || 'Spor.One';
+        }
+
+        // --- 5. BRANŞ Sadece İKON Parser ---
+        function getBranchOnlyIcons(branchStr) {
+            const parts = branchStr.split('/').map(p => p.trim());
+            let badgesHTML = '<div class="flex items-center justify-center gap-1.5">';
+            
+            parts.forEach(part => {
+                let iconClass = 'ph-fill ph-activity-heartbeat';
+                let bgClass = 'bg-slate-100 text-slate-700 border-slate-200';
+
+                if (part.includes("BASKETBOL")) {
+                    iconClass = 'ph-fill ph-basketball';
+                    bgClass = 'bg-orange-50 text-orange-600 border-orange-200/50';
+                } else if (part.includes("VOLEYBOL")) {
+                    iconClass = 'ph-fill ph-volleyball';
+                    bgClass = 'bg-emerald-50 text-emerald-600 border-emerald-200/50';
+                } else if (part.includes("CİMNASTİK")) {
+                    iconClass = 'ph-fill ph-sparkles';
+                    bgClass = 'bg-purple-50 text-purple-600 border-purple-200/50';
+                } else if (part.includes("YÜZME")) {
+                    iconClass = 'ph-fill ph-waves';
+                    bgClass = 'bg-cyan-50 text-cyan-600 border-cyan-200/50';
+                } else if (part.includes("FUTBOL")) {
+                    iconClass = 'ph-fill ph-soccer-ball';
+                    bgClass = 'bg-blue-50 text-blue-600 border-blue-200/50';
+                }
+
+                badgesHTML += `
+                    <span class="inline-flex items-center justify-center ${bgClass} border w-7 h-7 rounded-full shadow-sm" title="${part}">
+                        <i class="${iconClass} text-sm"></i>
+                    </span>
+                `;
+            });
+            badgesHTML += '</div>';
+            return badgesHTML;
+        }
+
+        // --- 6. MATRİS OLUŞTURMA FONKSİYONLARI ---
+
+        // Tarih Sütun Başlıklarını Dinamik ve Gerçek Sütun (TH) Olarak Ekle (Hizalama Sorunu Çözümü)
+        function buildMatrixHeaders() {
+            const headerRow = document.getElementById('matrix-header-row');
+            
+            // Mevcut tarih hücreleri varsa temizle (Sabit kolonlardan sonrakileri uçur)
+            headerRow.querySelectorAll('.date-th-cell').forEach(el => el.remove());
+
+            timelineDates.forEach(date => {
+                const headerStyle = date.isWeekend 
+                    ? 'bg-amber-50 text-amber-950 border-amber-200/40' 
+                    : 'bg-slate-50 text-slate-800 border-slate-200/40';
+
+                const dayNameColor = date.isWeekend ? 'text-amber-600' : 'text-slate-400';
+
+                const th = document.createElement('th');
+                th.className = `date-th-cell w-10 min-w-[40px] border-r border-b border-slate-200 text-center py-2.5 select-none ${headerStyle}`;
+                th.innerHTML = `
+                    <div class="flex flex-col items-center justify-center">
+                        <span class="text-[8px] font-extrabold text-slate-400 uppercase tracking-widest leading-none">${date.monthName}</span>
+                        <span class="text-xs font-black tracking-tight my-0.5 leading-none">${date.day}</span>
+                        <span class="text-[9px] font-bold ${dayNameColor} leading-none">${date.weekday}</span>
+                    </div>
+                `;
+                headerRow.appendChild(th);
+            });
+        }
+
+        // Satırları Oluştur (Branş Rozetleri ve Sarı Hücre Alanları ile Birlikte)
+        function renderMatrixRows(data) {
+            const tbody = document.getElementById('matrix-rows');
+            tbody.innerHTML = '';
+
+            data.forEach((row, rowIndex) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/50 transition-colors";
+
+                // 1. Sıra No (Sticky left-0)
+                const tdNum = document.createElement('td');
+                tdNum.className = "sticky-col w-12 min-w-[48px] px-3 py-3 text-center font-bold text-slate-400 border-r border-b border-slate-200 bg-slate-100 sticky left-0 z-20";
+                tdNum.textContent = rowIndex + 1;
+                tr.appendChild(tdNum);
+
+                // 2. Branş İkonları (Sticky left-12)
+                const tdBranch = document.createElement('td');
+                tdBranch.className = "sticky-col w-20 min-w-[80px] px-2 py-3 border-r border-b border-slate-200 bg-[#FFFDE7] sticky left-12 z-20 text-center";
+                tdBranch.innerHTML = getBranchOnlyIcons(row.branch);
+                tr.appendChild(tdBranch);
+
+                // 3. Instagram Hesabı (Sticky left-[132px])
+                const tdInstagram = document.createElement('td');
+                tdInstagram.className = "sticky-col w-64 min-w-[256px] px-4 py-3 font-semibold text-blue-600 underline border-r border-b border-slate-200 bg-white sticky left-[132px] z-20 truncate";
+                tdInstagram.innerHTML = `
+                    <a href="https://instagram.com/${row.link}" target="_blank" class="flex items-center gap-1.5 hover:text-blue-800 transition-colors">
+                        <i class="ph ph-instagram-logo text-base text-pink-500 shrink-0"></i>
+                        <span class="truncate">${row.link}</span>
+                    </a>
+                `;
+                tr.appendChild(tdInstagram);
+
+                // 4. Kulüp / Takım Adı (Sticky left-[388px])
+                const tdClub = document.createElement('td');
+                tdClub.className = "sticky-col w-64 min-w-[256px] px-4 py-3 font-extrabold text-[12px] border-r border-b border-slate-200 bg-[#FFFDE7] sticky left-[388px] z-20 truncate";
+                tdClub.textContent = row.club;
+                tr.appendChild(tdClub);
+
+                // 5. Tarih Matris Hücreleri (Kaydırılabilir alan)
+                row.planStates.forEach((isPlanned, dateIndex) => {
+                    const isWeekend = timelineDates[dateIndex].isWeekend;
+                    const tdCell = document.createElement('td');
+                    tdCell.className = "w-10 min-w-[40px] border-r border-b border-slate-200/80 transition-all text-center p-0";
+                    
+                    let bgClass = 'bg-white hover:bg-slate-100/50 cursor-pointer';
+                    let dotHTML = '';
+                    
+                    if (isPlanned) {
+                        bgClass = 'bg-[#3B82F6] hover:bg-blue-600 transition-colors cursor-pointer shadow-sm';
+                        dotHTML = `<div class="w-1.5 h-1.5 rounded-full bg-white mx-auto shadow-sm"></div>`;
+                    } else if (isWeekend) {
+                        bgClass = 'bg-amber-50/20 hover:bg-amber-100/30 cursor-pointer';
+                    }
+
+                    tdCell.className += ` ${bgClass}`;
+                    tdCell.innerHTML = `<div class="h-11 flex items-center justify-center">${dotHTML}</div>`;
+                    tdCell.onclick = () => toggleCell(rowIndex, dateIndex);
+                    
+                    tr.appendChild(tdCell);
+                });
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Hücre Aktif/Pasif Yapıcı (Görsel Matris Etkileşimi)
+        function toggleCell(rowIndex, dateIndex) {
+            matrixData[rowIndex].planStates[dateIndex] = !matrixData[rowIndex].planStates[dateIndex];
+            renderMatrixRows(matrixData);
+        }
+
+        // Matris Arama Filtresi
+        function filterMatrix() {
+            const term = document.getElementById('matrix-search').value.toLowerCase();
+            const filtered = matrixData.filter(row => 
+                row.club.toLowerCase().includes(term) || 
+                row.branch.toLowerCase().includes(term) || 
+                row.link.toLowerCase().includes(term)
+            );
+            renderMatrixRows(filtered);
+        }
+
+        // --- 7. İŞLEM GEÇMİŞİ LOGLARI ---
+        function renderLogs() {
+            const tbody = document.getElementById('logs-list');
+            tbody.innerHTML = '';
+
+            logsData.forEach(log => {
+                const trHTML = `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center gap-3">
+                                <div class="bg-indigo-50 p-2 rounded-lg text-primary">
+                                    <i class="ph-bold ph-activity text-lg"></i>
+                                </div>
+                                <span class="font-bold text-slate-800">${log.team}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="text-slate-600 font-medium">${log.action}</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-slate-500">
+                            ${log.date}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right font-semibold text-slate-700">
+                            ${log.time}
+                        </td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', trHTML);
+            });
+        }
+
+        // --- 8. SENKRONİZASYON VE KAYDETME EFEKTİ ---
+        function saveMatrixData() {
+            const btn = document.getElementById('btn-save-matrix');
+            const icon = document.getElementById('save-icon');
+            const text = document.getElementById('save-text');
+            const loader = document.getElementById('save-loader');
+
+            btn.classList.add('opacity-90', 'pointer-events-none');
+            icon.classList.add('hidden');
+            loader.classList.remove('hidden');
+            text.textContent = "Gönderiliyor...";
+
+            setTimeout(() => {
+                btn.classList.remove('opacity-90', 'pointer-events-none');
+                icon.classList.remove('hidden');
+                loader.classList.add('hidden');
+                text.textContent = "Sheet'e Kaydet";
+
+                showToast("Matris verileri Google Sheet ile senkronize edildi!");
+
+                logsData.unshift({
+                    team: "Tüm Kulüpler",
+                    action: "Matris planlaması Google Sheet'e yazdırıldı.",
+                    time: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
+                    date: "27 Mayıs 2026"
+                });
+                renderLogs();
+
+            }, 1200);
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').textContent = msg;
+            
+            toast.classList.remove('translate-y-10', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-10', 'opacity-0');
+            }, 3000);
+        }
+
+    </script>
+</body>
+</html>
