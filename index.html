@@ -44,10 +44,10 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
-        /* Özel Kaydırma Çubuğu (Scrollbar) */
+        /* Özel İnce Scrollbar Tasarımı */
         .custom-scrollbar::-webkit-scrollbar {
-            height: 8px;
-            width: 8px;
+            height: 6px;
+            width: 6px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
             background: #F1F5F9;
@@ -61,17 +61,18 @@
             background: #94A3B8;
         }
 
-        /* Sticky kolonlar için border birleşme sorunlarını çözen özel CSS */
-        .sticky-col {
-            position: sticky !important;
-            box-shadow: 2px 0 5px -2px rgba(0,0,0,0.05);
+        /* Dikey Tarih Etiketleri için Modern Küçük Görünüm */
+        .date-header-cell {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            white-space: nowrap;
         }
     </style>
 </head>
 <body class="text-gray-800 antialiased flex h-screen overflow-hidden bg-[#F8FAFC]">
 
     <!-- SOL SİDEBAR MENU -->
-    <aside class="w-80 bg-dark text-white flex flex-col shadow-2xl z-30 shrink-0 border-r border-slate-800">
+    <aside class="w-72 bg-dark text-white flex flex-col shadow-2xl z-20 shrink-0 border-r border-slate-800">
         <!-- Logo ve Başlık -->
         <div class="h-16 flex items-center px-6 border-b border-slate-800 gap-3 shrink-0">
             <div class="bg-primary text-white p-1.5 rounded-lg shadow-lg shadow-primary/30">
@@ -79,31 +80,31 @@
             </div>
             <div>
                 <h1 class="font-bold text-lg tracking-tight leading-none">Spor.One</h1>
-                <span class="text-[9px] text-gray-400 font-semibold uppercase tracking-wider">İçerik Yönetim Paneli</span>
+                <span class="text-[9px] text-slate-400 font-semibold uppercase tracking-wider">İçerik Yönetim Paneli</span>
             </div>
         </div>
         
         <!-- Menü Başlığı -->
         <div class="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-            Yönetim Araçları
+            Yönetim Paneli
         </div>
         
         <!-- Gezinme Menüsü -->
-        <nav class="flex-1 px-4 space-y-1 overflow-y-auto">
-            <button onclick="switchView('view-dashboard')" class="nav-btn w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all text-left" data-target="view-dashboard">
+        <nav class="flex-1 px-4 space-y-1">
+            <button onclick="switchView('view-dashboard')" class="nav-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all text-left" data-target="view-dashboard">
                 <div class="flex items-center gap-3">
                     <i class="ph-fill ph-chart-pie-slice text-lg"></i>
                     <span class="font-medium text-xs">Genel Özet</span>
                 </div>
             </button>
-            <button onclick="switchView('view-matrix')" class="nav-btn w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all text-left" data-target="view-matrix">
+            <button onclick="switchView('view-matrix')" class="nav-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all text-left" data-target="view-matrix">
                 <div class="flex items-center gap-3">
                     <i class="ph-fill ph-grid-nine text-lg"></i>
                     <span class="font-medium text-xs">Planlama Matrisi</span>
                 </div>
-                <span class="bg-amber-500/10 text-amber-500 text-[9px] font-bold px-1.5 py-0.5 rounded border border-amber-500/20">Excel</span>
+                <span class="bg-amber-500/15 text-amber-500 text-[9px] font-bold px-1.5 py-0.5 rounded border border-amber-500/20">Excel</span>
             </button>
-            <button onclick="switchView('view-logs')" class="nav-btn w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all text-left" data-target="view-logs">
+            <button onclick="switchView('view-logs')" class="nav-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all text-left" data-target="view-logs">
                 <div class="flex items-center gap-3">
                     <i class="ph-fill ph-activity text-lg"></i>
                     <span class="font-medium text-xs">İşlem Logları</span>
@@ -111,9 +112,17 @@
             </button>
         </nav>
 
+        <!-- Hızlı Aksiyon -->
+        <div class="px-4 mb-4">
+            <button onclick="openAddModal()" class="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 rounded-lg shadow-md shadow-emerald-950/20 transition-all active:scale-[0.98]">
+                <i class="ph-bold ph-plus"></i>
+                Yeni Kulüp Ekle
+            </button>
+        </div>
+
         <!-- Kullanıcı Profili -->
         <div class="p-4 border-t border-slate-800 shrink-0 bg-slate-950/40">
-            <div class="flex items-center gap-2.5">
+            <div class="flex items-center gap-3">
                 <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-primary to-indigo-400 flex items-center justify-center text-white font-bold text-xs shadow-md shadow-primary/20">
                     ADM
                 </div>
@@ -131,17 +140,17 @@
         <!-- Üst Bar (Header) -->
         <header class="h-16 bg-white border-b border-slate-200 flex justify-between items-center px-6 shrink-0 z-10">
             <div class="flex items-center gap-3">
-                <h2 class="text-lg font-bold text-slate-800 tracking-tight" id="header-title">Özet Ekranı</h2>
-                <div class="hidden md:flex items-center gap-1.5 text-[10px] text-slate-500 bg-slate-100 py-0.5 px-2 rounded-lg font-medium">
+                <h2 class="text-xl font-bold text-slate-800 tracking-tight" id="header-title">Özet Ekranı</h2>
+                <div class="hidden md:flex items-center gap-1.5 text-[10px] text-slate-500 bg-slate-100 py-0.5 px-2 rounded-md font-medium">
                     <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                    Sheet Bağlantısı Aktif
+                    Bulut Senkronizasyonu Aktif
                 </div>
             </div>
             
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-3">
                 <!-- Tarih Widget -->
-                <div class="text-xs text-slate-600 font-medium bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg flex items-center gap-2">
-                    <i class="ph-bold ph-calendar-blank text-primary text-sm"></i>
+                <div class="text-xs text-slate-600 font-medium bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+                    <i class="ph-bold ph-calendar-blank text-primary"></i>
                     <span id="header-date">--</span>
                 </div>
             </div>
@@ -156,87 +165,117 @@
                 <div class="flex justify-between items-center">
                     <div>
                         <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Hoş Geldiniz 👋</h2>
-                        <p class="text-slate-500 text-xs mt-0.5">İçerik planlama matrisinizdeki 18 aktif hesabı ve yayın süreçlerini buradan yönetin.</p>
+                        <p class="text-xs text-slate-500 mt-0.5">Spor okulları ve kulüplerin içerik yönetimini buradan takip edebilirsiniz.</p>
                     </div>
-                    <button onclick="switchView('view-matrix')" class="bg-primary hover:bg-primary-dark text-white text-xs font-semibold py-2.5 px-4 rounded-lg shadow-lg shadow-indigo-200 flex items-center gap-2 transition-all hover:-translate-y-0.5 active:translate-y-0">
-                        <i class="ph-bold ph-grid-nine text-sm"></i>
-                        Matrisi Aç ve Düzenle
-                    </button>
+                    <div class="flex gap-2">
+                        <button onclick="openAddModal()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 font-bold text-xs py-2 px-4 rounded-lg flex items-center gap-1.5 transition-all">
+                            <i class="ph-bold ph-plus"></i>
+                            Yeni Kulüp
+                        </button>
+                        <button onclick="switchView('view-matrix')" class="bg-primary hover:bg-primary-dark text-white font-semibold py-2 px-4 rounded-lg shadow-sm text-xs flex items-center gap-1.5 transition-all">
+                            <i class="ph-bold ph-grid-nine"></i>
+                            Matrisi Düzenle
+                        </button>
+                    </div>
                 </div>
 
                 <!-- İstatistik Kartları -->
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm">
+                    <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
                         <div class="flex justify-between items-start mb-2">
-                            <div class="bg-indigo-50 text-primary p-2 rounded-lg"><i class="ph-fill ph-users-three text-lg"></i></div>
-                            <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">18 Kulüp</span>
+                            <div class="bg-indigo-50 text-primary p-2.5 rounded-lg"><i class="ph-fill ph-users-three text-lg"></i></div>
                         </div>
-                        <div class="text-2xl font-bold text-slate-800">18</div>
-                        <div class="text-xs text-slate-500 font-medium mt-0.5">Aktif Planlanan Hesap</div>
+                        <div class="text-2xl font-bold text-slate-800" id="dash-total-clubs">18</div>
+                        <div class="text-xs text-slate-500 font-medium mt-0.5">Aktif Kayıtlı Kulüp</div>
                     </div>
 
-                    <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm">
+                    <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
                         <div class="flex justify-between items-start mb-2">
-                            <div class="bg-amber-50 text-amber-600 p-2 rounded-lg"><i class="ph-fill ph-calendar text-lg"></i></div>
-                            <span class="text-[10px] font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">31 Gün</span>
+                            <div class="bg-amber-50 text-amber-600 p-2.5 rounded-lg"><i class="ph-fill ph-calendar text-lg"></i></div>
                         </div>
-                        <div class="text-2xl font-bold text-slate-800">27.05 - 26.06</div>
+                        <div class="text-lg font-bold text-slate-800">27.05 - 26.06</div>
                         <div class="text-xs text-slate-500 font-medium mt-0.5">Planlama Dönemi</div>
                     </div>
 
-                    <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm">
+                    <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
                         <div class="flex justify-between items-start mb-2">
-                            <div class="bg-emerald-50 text-emerald-600 p-2 rounded-lg"><i class="ph-fill ph-check-square-offset text-lg"></i></div>
-                            <span class="text-[10px] font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">%82 Oran</span>
+                            <div class="bg-emerald-50 text-emerald-600 p-2.5 rounded-lg"><i class="ph-fill ph-check-square-offset text-lg"></i></div>
                         </div>
-                        <div class="text-2xl font-bold text-slate-800">412</div>
-                        <div class="text-xs text-slate-500 font-medium mt-0.5">Planlanmış Toplam Gönderi</div>
+                        <div class="text-2xl font-bold text-slate-800" id="dash-total-plans">412</div>
+                        <div class="text-xs text-slate-500 font-medium mt-0.5">Planlanmış Toplam Hücre</div>
                     </div>
 
-                    <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
                         <div class="flex justify-between items-center mb-1">
-                            <span class="text-xs font-semibold text-slate-600">Genel Tamamlanma</span>
-                            <span class="text-sm font-bold text-emerald-600">82%</span>
+                            <span class="text-xs font-semibold text-slate-600">Doluluk Oranı</span>
+                            <span class="text-sm font-bold text-emerald-600" id="dash-percentage">82%</span>
                         </div>
                         <div class="w-full bg-slate-100 rounded-full h-2">
-                            <div class="bg-emerald-500 h-2 rounded-full" style="width: 82%"></div>
+                            <div class="bg-emerald-500 h-2 rounded-full" id="dash-bar" style="width: 82%"></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Bilgi Kartı -->
-                <div class="bg-indigo-900 text-indigo-100 rounded-xl p-5 shadow-md relative overflow-hidden flex items-center justify-between">
-                    <div class="space-y-1 z-10 relative">
-                        <h3 class="text-sm font-bold">Nasıl Planlama Yapılır?</h3>
-                        <p class="text-indigo-200 text-xs max-w-2xl">Matris ekranında, her bir tarih sütunundaki hücreye tıklayarak hızlıca planlanmış/planlanmamış içerik durumunu değiştirebilirsiniz. Değişiklikleriniz anında mavi şeritlerle güncellenir.</p>
+                <!-- Son Güncellemeler Bilgisi -->
+                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                    <div class="p-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+                        <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Hızlı İşlemler & Kısayollar</h3>
                     </div>
-                    <i class="ph ph-magic-wand text-6xl text-indigo-800/40 absolute right-4 top-1/2 transform -translate-y-1/2 select-none pointer-events-none"></i>
+                    <div class="p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="border border-slate-100 p-4 rounded-lg bg-slate-50/50 flex items-start gap-3">
+                            <i class="ph ph-magic-wand text-2xl text-primary shrink-0 mt-0.5"></i>
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-800 mb-1">Doğrudan Tıklayarak Düzenleyin</h4>
+                                <p class="text-[11px] text-slate-500 leading-relaxed">Planlama Matrisi ekranında, herhangi bir hücreye doğrudan tıklayarak plan durumunu değiştirebilirsiniz. Hücreler maviye dönerek o günün planlı olduğunu belirtir.</p>
+                            </div>
+                        </div>
+                        <div class="border border-slate-100 p-4 rounded-lg bg-slate-50/50 flex items-start gap-3">
+                            <i class="ph ph-eye-slash text-2xl text-amber-500 shrink-0 mt-0.5"></i>
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-800 mb-1">Görünümü Kendinize Göre Ayarlayın</h4>
+                                <p class="text-[11px] text-slate-500 leading-relaxed">Ekran alanınız kısıtlıysa matris üzerindeki sütun filtreleme butonlarını kullanarak "Branş" ve "Instagram" sütunlarını anında gizleyebilirsiniz.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
             <!-- 2. İNTERAKTİF PLANLAMA MATRİSİ (SPREADSHEET VIEW) -->
             <section id="view-matrix" class="view-section space-y-3">
                 
+                <!-- Modern, Küçük ve Temiz Kontrol Paneli (Gereksiz bilgi kutusu tamamen kaldırıldı) -->
                 <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-3 justify-between items-center">
-                    <div class="flex items-center gap-2">
-                        <div class="bg-indigo-50 text-indigo-700 py-1 px-2 rounded-lg font-bold text-xs flex items-center gap-1.5 border border-indigo-100">
-                            <i class="ph ph-sparkles text-sm"></i>
-                            Kompakt Görünüm Aktif
-                        </div>
-                        <p class="text-xs text-slate-500 font-medium">
-                            Planlamak istediğiniz güne tıklayın. Sütun ve satırlar daraltılarak maksimum ekran görünürlüğü optimize edilmiştir.
-                        </p>
+                    
+                    <!-- Sütun Göster/Gizle Butonları (Dinamik Gizleme Özelliği) -->
+                    <div class="flex items-center gap-2 w-full md:w-auto">
+                        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mr-1">Sütunları Filtrele:</span>
+                        
+                        <button onclick="toggleColumn('branch')" id="toggle-btn-branch" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border shadow-sm select-none bg-indigo-50 border-indigo-200 text-indigo-700">
+                            <i id="toggle-icon-branch" class="ph-bold ph-eye text-sm"></i>
+                            Branş
+                        </button>
+                        
+                        <button onclick="toggleColumn('instagram')" id="toggle-btn-instagram" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border shadow-sm select-none bg-indigo-50 border-indigo-200 text-indigo-700">
+                            <i id="toggle-icon-instagram" class="ph-bold ph-eye text-sm"></i>
+                            Instagram
+                        </button>
+                        
+                        <!-- Yeni Kulüp Ekle Butonu -->
+                        <button onclick="openAddModal()" class="ml-2 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all border shadow-sm select-none bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100">
+                            <i class="ph-bold ph-plus text-sm"></i>
+                            Yeni Kulüp Ekle
+                        </button>
                     </div>
                     
-                    <div class="flex items-center gap-2 w-full md:w-auto">
+                    <div class="flex items-center gap-2 w-full md:w-auto shrink-0 justify-end">
                         <!-- Arama -->
-                        <div class="relative w-full md:w-64">
-                            <i class="ph ph-magnifying-glass absolute left-2.5 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
-                            <input type="text" id="matrix-search" oninput="filterMatrix()" placeholder="Kulüp veya branş ara..." class="w-full bg-slate-50 border border-slate-200 rounded-lg py-1.5 pl-8 pr-3 text-xs focus:outline-none focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
+                        <div class="relative w-full md:w-56 shrink-0">
+                            <i class="ph ph-magnifying-glass absolute left-2.5 top-1/2 transform -translate-y-1/2 text-slate-400 text-xs"></i>
+                            <input type="text" id="matrix-search" oninput="filterMatrix()" placeholder="Ara..." class="w-full bg-slate-50 border border-slate-200 rounded-lg py-1.5 pl-8 pr-2 text-xs focus:outline-none focus:bg-white focus:ring-1 focus:ring-primary focus:border-primary transition-all">
                         </div>
                         
                         <!-- Kaydet Butonu -->
-                        <button id="btn-save-matrix" onclick="saveMatrixData()" class="bg-primary hover:bg-primary-dark text-white font-semibold py-1.5 px-4 rounded-lg shadow-md flex items-center gap-1.5 text-xs shrink-0 active:scale-95 transition-all">
+                        <button id="btn-save-matrix" onclick="saveMatrixData()" class="bg-primary hover:bg-primary-dark text-white font-bold py-1.5 px-4 rounded-lg shadow-sm flex items-center gap-1.5 text-xs shrink-0 active:scale-95 transition-transform">
                             <i class="ph-bold ph-cloud-arrow-up text-sm" id="save-icon"></i>
                             <span id="save-text">Sheet'e Kaydet</span>
                             <i class="ph-bold ph-spinner animate-spin text-sm hidden" id="save-loader"></i>
@@ -244,19 +283,23 @@
                     </div>
                 </div>
 
-                <!-- Excel Matris Tablo Konteyneri (Maksimum seviyede daraltılmış) -->
-                <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm flex flex-col max-h-[calc(100vh-220px)]">
-                    <div class="overflow-auto custom-scrollbar flex-1">
-                        <table class="w-full border-separate border-spacing-0 text-xs text-left">
-                            <thead class="bg-slate-50 sticky top-0 z-30">
-                                <tr id="matrix-header-row">
-                                    <!-- Sabit Kolonlar - Genişlikler ve Kayma Mesafeleri (Sticky Left) Milimetrik Ayarlandı -->
-                                    <th class="w-10 min-w-[40px] px-2 py-2 text-center text-slate-400 font-bold border-r border-b border-slate-200 bg-slate-100 sticky left-0 z-40">#</th>
-                                    <th class="w-24 min-w-[96px] px-3 py-2 font-bold text-slate-700 uppercase tracking-wider border-r border-b border-slate-200 bg-slate-50 sticky left-10 z-40 text-left">BRANŞ</th>
-                                    <th class="w-56 min-w-[224px] px-3 py-2 font-bold text-slate-700 uppercase tracking-wider border-r border-b border-slate-200 bg-slate-50 sticky left-[136px] z-40 text-left">INSTAGRAM HESABI</th>
-                                    <th class="w-56 min-w-[224px] px-3 py-2 font-bold text-slate-700 uppercase tracking-wider border-r border-b border-slate-200 bg-[#FFFDE7] sticky left-[360px] z-40 text-left">KULÜP / TAKIM ADI</th>
+                <!-- Excel Matris Tablo Konteyneri -->
+                <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm flex flex-col">
+                    <div class="overflow-x-auto custom-scrollbar" id="matrix-table-wrapper" style="max-height: calc(100vh - 250px);">
+                        <table class="w-full border-collapse border-spacing-0 text-xs text-left" id="matrix-main-table">
+                            <thead class="bg-slate-50 sticky top-0 z-30 shadow-sm border-b border-slate-200">
+                                <tr>
+                                    <!-- Sabit Kolonlar -->
+                                    <th class="w-10 min-w-[40px] px-2 py-2 text-center text-slate-400 font-bold border-r border-slate-200 bg-slate-100 sticky left-0 z-20 select-none">#</th>
                                     
-                                    <!-- Dinamik Tarih Kolonları (JS ile Doldurulacak - Her biri w-8 / 32px genişliğinde) -->
+                                    <th class="col-branch w-20 min-w-[80px] px-2 py-2 font-bold text-slate-600 border-r border-slate-200 bg-slate-50 sticky left-10 z-20 select-none text-left">BRANŞ</th>
+                                    
+                                    <th class="col-instagram col-instagram-sticky w-[200px] min-w-[200px] px-3 py-2 font-bold text-slate-600 border-r border-slate-200 bg-slate-50 sticky z-20 select-none text-left">INSTAGRAM HESABI</th>
+                                    
+                                    <th class="col-club-sticky w-[220px] min-w-[220px] px-3 py-2 font-bold text-slate-700 border-r border-slate-200 bg-slate-50 sticky z-20 select-none text-left">KULÜP / TAKIM ADI</th>
+                                    
+                                    <!-- Dinamik Tarih Kolonları (JS ile 31 Kolon Doldurulacak) -->
+                                    <th class="p-0 border-r border-slate-200" id="header-dates-placeholder" style="display:none"></th>
                                 </tr>
                             </thead>
                             <tbody id="matrix-rows" class="divide-y divide-slate-100">
@@ -270,11 +313,11 @@
             <!-- 3. İŞLEM LOGLARI (LOGS VIEW) -->
             <section id="view-logs" class="view-section max-w-7xl mx-auto space-y-4">
                 <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                    <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-2.5">
                         <i class="ph-fill ph-clock-counter-clockwise text-primary text-xl"></i>
                         <div>
                             <p class="text-slate-800 font-bold text-sm">Sistem Hareket Kayıtları</p>
-                            <p class="text-slate-500 text-xs">Matriste yapılan son içerik ekleme ve durum güncellemeleri.</p>
+                            <p class="text-slate-400 text-[11px]">Matris planlamasında yapılan en son güncellemeler.</p>
                         </div>
                     </div>
                 </div>
@@ -283,7 +326,7 @@
                 <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-slate-200 text-xs text-left">
-                            <thead class="bg-slate-50 text-slate-500 uppercase font-semibold tracking-wider">
+                            <thead class="bg-slate-50 text-slate-500 uppercase text-[10px] font-bold tracking-wider">
                                 <tr>
                                     <th scope="col" class="px-5 py-3">Takım / Kulüp</th>
                                     <th scope="col" class="px-5 py-3">İşlem Detayı</th>
@@ -302,10 +345,75 @@
         </main>
     </div>
 
+    <!-- YENİ KULÜP EKLEME MODALI -->
+    <div id="add-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform scale-95 transition-transform duration-300" id="add-modal-content">
+            <!-- Modal Header -->
+            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+                <h3 class="text-lg font-bold text-slate-800">Yeni Kulüp / Takım Ekle</h3>
+                <button onclick="closeAddModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <i class="ph-bold ph-x text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="p-6 space-y-4">
+                <!-- Branş Seçimi (Çoklu Seçim Taklidi) -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-2">Branş / Kategori Seçimi</label>
+                    <div class="flex flex-wrap gap-2" id="branch-selectors">
+                        <button type="button" class="branch-select-btn px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-600 hover:border-orange-400 hover:text-orange-600 transition-colors flex items-center gap-1.5" data-branch="BASKETBOL">
+                            <i class="ph-fill ph-basketball"></i> Basketbol
+                        </button>
+                        <button type="button" class="branch-select-btn px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-600 hover:border-emerald-400 hover:text-emerald-600 transition-colors flex items-center gap-1.5" data-branch="VOLEYBOL">
+                            <i class="ph-fill ph-volleyball"></i> Voleybol
+                        </button>
+                        <button type="button" class="branch-select-btn px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-600 hover:border-blue-400 hover:text-blue-600 transition-colors flex items-center gap-1.5" data-branch="FUTBOL">
+                            <i class="ph-fill ph-soccer-ball"></i> Futbol
+                        </button>
+                        <button type="button" class="branch-select-btn px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-600 hover:border-cyan-400 hover:text-cyan-600 transition-colors flex items-center gap-1.5" data-branch="YÜZME">
+                            <i class="ph-fill ph-waves"></i> Yüzme
+                        </button>
+                        <button type="button" class="branch-select-btn px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-600 hover:border-purple-400 hover:text-purple-600 transition-colors flex items-center gap-1.5" data-branch="CİMNASTİK">
+                            <i class="ph-fill ph-sparkles"></i> Cimnastik
+                        </button>
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-1.5">Birden fazla branş seçebilirsiniz.</p>
+                </div>
+
+                <!-- Kulüp Adı -->
+                <div>
+                    <label for="new-club-name" class="block text-xs font-bold text-slate-700 mb-1.5">Kulüp / Takım Adı <span class="text-red-500">*</span></label>
+                    <input type="text" id="new-club-name" placeholder="Örn: FB ATAŞEHİR KIZ VOLEYBOL" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
+                </div>
+
+                <!-- Instagram Hesabı -->
+                <div>
+                    <label for="new-club-ig" class="block text-xs font-bold text-slate-700 mb-1.5">Instagram Kullanıcı Adı</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 font-medium text-sm">@</span>
+                        <input type="text" id="new-club-ig" placeholder="fenerbahcesporokulu" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-4 py-2.5 text-sm focus:outline-none focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex justify-end gap-3">
+                <button onclick="closeAddModal()" class="px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-200 transition-colors">
+                    İptal
+                </button>
+                <button onclick="addNewClub()" class="bg-primary hover:bg-primary-dark text-white px-5 py-2 rounded-lg text-sm font-bold shadow-md shadow-primary/20 transition-transform active:scale-95 flex items-center gap-2">
+                    <i class="ph-bold ph-check"></i>
+                    Kaydet ve Ekle
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Bildirimi (Sağ Alt) -->
-    <div id="toast" class="fixed bottom-6 right-6 transform translate-y-10 opacity-0 bg-slate-900 text-white px-4 py-3 rounded-lg shadow-xl flex items-center gap-2 z-50 pointer-events-none transition-all duration-300 text-xs">
-        <i class="ph-fill ph-check-circle text-secondary text-lg"></i>
-        <p class="font-medium" id="toast-message">Başarıyla kaydedildi!</p>
+    <div id="toast" class="fixed bottom-6 right-6 transform translate-y-10 opacity-0 bg-slate-900 text-white px-4 py-3 rounded-lg shadow-xl flex items-center gap-2 z-[60] pointer-events-none transition-all duration-300 text-xs">
+        <i class="ph-fill ph-check-circle text-secondary text-base"></i>
+        <p class="font-semibold" id="toast-message">İşlem başarıyla gerçekleştirildi.</p>
     </div>
 
     <!-- JAVASCRIPT KODLARI -->
@@ -314,23 +422,22 @@
         // Görseldeki tarih aralığı: 27.05.2026 - 26.06.2026 (Tam 31 gün)
         const generateDates = () => {
             const dates = [];
-            const weekdays = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
-            const months = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
             let current = new Date(2026, 4, 27); // 27 Mayıs 2026
             const end = new Date(2026, 5, 26);   // 26 Haziran 2026
+            const dayNames = ["Paz", "Pzt", "Sal", "Çar", "Per", "Cum", "Cmt"];
+            const monthNames = ["MAY", "HAZ"];
             
             while (current <= end) {
-                const dayStr = String(current.getDate()).padStart(2, '0');
-                const monthStr = String(current.getMonth() + 1).padStart(2, '0');
-                const dayOfWeekIndex = current.getDay();
-                
+                const dayNo = String(current.getDate()).padStart(2, '0');
+                const monthName = monthNames[current.getMonth() - 4] || "HAZ"; // Mayıs 4, Haziran 5. index
+                const dayName = dayNames[current.getDay()];
+                const isWeekend = current.getDay() === 0 || current.getDay() === 6;
                 dates.push({
-                    formatted: `${dayStr}.${monthStr}`,
-                    day: dayStr,
-                    month: monthStr,
-                    monthName: months[current.getMonth()].toUpperCase(),
-                    weekday: weekdays[dayOfWeekIndex],
-                    isWeekend: dayOfWeekIndex === 0 || dayOfWeekIndex === 6 // 0: Pazar, 6: Cumartesi
+                    formatted: `${dayNo}.${String(current.getMonth() + 1).padStart(2, '0')}.${current.getFullYear()}`,
+                    day: dayNo,
+                    month: monthName,
+                    weekday: dayName,
+                    isWeekend: isWeekend
                 });
                 current.setDate(current.getDate() + 1);
             }
@@ -339,9 +446,16 @@
 
         const timelineDates = generateDates();
 
+        // Görünüm Kolon Ayarları
+        let showBranch = true;
+        let showInstagram = true;
+
+        // Modal Seçili Branşlar
+        let selectedBranches = new Set();
+
         // --- 2. KULÜP VERİLERİ ---
         const initialTeams = [
-            { id: 1, branch: "BASKETBOL / VOLEYBOL / CİMNASTİK", link: "fenerbahcesporokuluatasehir", club: "FB ATAŞEHİR SO", planRange: [0, 30] },
+            { id: 1, branch: "BASKETBOL / VOLEYBOL / CIMNASTİK", link: "fenerbahcesporokuluatasehir", club: "FB ATAŞEHİR SO", planRange: [0, 30] },
             { id: 2, branch: "BASKETBOL / VOLEYBOL", link: "fenerbahcesporokuluumraniye", club: "FB ÜMRANİYE SO", planRange: [0, 30] },
             { id: 3, branch: "BASKETBOL / VOLEYBOL", link: "fenerbahcesporokulukurtkoy", club: "FB KURTKÖY SO", planRange: [0, 30] },
             { id: 4, branch: "YÜZME", link: "fbyuzmecekmekoy", club: "FB ÇEKMEKÖY YÜZME SPOR", planRange: [0, 20] },
@@ -355,39 +469,44 @@
             { id: 12, branch: "VOLEYBOL", link: "fbvoleyboluskudar", club: "FB ÜSKÜDAR", planRange: [0, 18] },
             { id: 13, branch: "VOLEYBOL", link: "bogaziciakademivoleybol", club: "BOGAÇİÇİ SK VOLEYBOL", planRange: [0, 20] },
             { id: 14, branch: "VOLEYBOL", link: "gsusudarvoleybolokulu", club: "GALATASARAY BULGURLU VOL", planRange: [0, 14] },
-            { id: 15, branch: "BASKETBOL / VOLEYBOL / CİMNASTİK", link: "trendistanbulsporkulubu", club: "TREND İSTANBUL SK", planRange: [0, 18] },
+            { id: 15, branch: "BASKETBOL / VOLEYBOL / CIMNASTİK", link: "trendistanbulsporkulubu", club: "TREND İSTANBUL SK", planRange: [0, 18] },
             { id: 16, branch: "BASKETBOL", link: "beylikduzu.sk", club: "BEYLİKDÜZÜ BASKETBOL SK", planRange: [0, 1] },
             { id: 17, branch: "BASKETBOL / VOLEYBOL", link: "saydamakademisk", club: "SAYDAM AKADEMİ SK", planRange: [0, 14] },
             { id: 18, branch: "BASKETBOL / VOLEYBOL", link: "HESABA KENDİ BAKIYOR", club: "KIZILTOPRAK SK", planRange: [0, 1] }
         ];
 
-        // Her bir hücre için aktiflik/planlılık durumunu tutacak dizi oluştur
-        const matrixData = initialTeams.map(t => {
+        // Matris verisini yükle
+        let matrixData = initialTeams.map(t => {
             const planStates = Array(timelineDates.length).fill(false);
             for (let i = t.planRange[0]; i <= t.planRange[1]; i++) {
-                if(i < planStates.length) planStates[i] = true;
+                if (i < planStates.length) planStates[i] = true;
             }
             return {
-                ...t,
+                id: t.id,
+                branch: t.branch,
+                link: t.link,
+                club: t.club,
                 planStates
             };
         });
 
+        // Log verileri
         const logsData = [
-            { team: "FB ATAŞEHİR SO", action: "Planlama başlatıldı", time: "10:45", date: "27 Mayıs 2026" },
-            { team: "FB ÇEKMEKÖY YÜZME SPOR", action: "Haziran 15 sonrası boşaltıldı", time: "09:12", date: "27 Mayıs 2026" },
-            { team: "DEV ATAŞEHİR SK", action: "Planlama güncellendi", time: "08:30", date: "27 Mayıs 2026" }
+            { team: "FB ATAŞEHİR SO", action: "Planlama başlatıldı", time: "22:45", date: "27 Mayıs 2026" },
+            { team: "FB ÇEKMEKÖY YÜZME SPOR", action: "Haziran 15 sonrası boşaltıldı", time: "21:12", date: "27 Mayıs 2026" },
+            { team: "DEV ATAŞEHİR SK", action: "Planlama güncellendi", time: "20:30", date: "27 Mayıs 2026" }
         ];
 
         // --- 3. BAŞLANGIÇ AYARLARI ---
         document.addEventListener('DOMContentLoaded', () => {
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('header-date').textContent = new Date(2026, 4, 27).toLocaleDateString('tr-TR', options);
+            document.getElementById('header-date').textContent = new Date().toLocaleDateString('tr-TR', options); // Dinamik bugünün tarihi
             
             buildMatrixHeaders();
             renderMatrixRows(matrixData);
             renderLogs();
             switchView('view-dashboard');
+            setupBranchSelectors();
         });
 
         // --- 4. EKRAN GEÇİŞ YÖNETİMİ ---
@@ -417,148 +536,221 @@
                 'view-logs': 'Sistem İşlem Geçmişi'
             };
             document.getElementById('header-title').textContent = titles[activeTarget] || 'Spor.One';
+            
+            // Dashboard sayımı
+            if (activeTarget === 'view-dashboard') {
+                updateDashboardStats();
+            }
         }
 
-        // --- 5. BRANŞ Sadece İKON Parser (Sola Yaslandı ve Küçültüldü) ---
-        function getBranchOnlyIcons(branchStr) {
-            const parts = branchStr.split('/').map(p => p.trim());
-            let badgesHTML = '<div class="flex items-center justify-start gap-1">';
+        function updateDashboardStats() {
+            document.getElementById('dash-total-clubs').textContent = matrixData.length;
             
-            parts.forEach(part => {
-                let iconClass = 'ph-fill ph-activity-heartbeat';
-                let bgClass = 'bg-slate-100 text-slate-700 border-slate-200';
-
-                if (part.includes("BASKETBOL")) {
-                    iconClass = 'ph-fill ph-basketball';
-                    bgClass = 'bg-orange-50 text-orange-600 border-orange-200/50';
-                } else if (part.includes("VOLEYBOL")) {
-                    iconClass = 'ph-fill ph-volleyball';
-                    bgClass = 'bg-emerald-50 text-emerald-600 border-emerald-200/50';
-                } else if (part.includes("CİMNASTİK")) {
-                    iconClass = 'ph-fill ph-sparkles';
-                    bgClass = 'bg-purple-50 text-purple-600 border-purple-200/50';
-                } else if (part.includes("YÜZME")) {
-                    iconClass = 'ph-fill ph-waves';
-                    bgClass = 'bg-cyan-50 text-cyan-600 border-cyan-200/50';
-                } else if (part.includes("FUTBOL")) {
-                    iconClass = 'ph-fill ph-soccer-ball';
-                    bgClass = 'bg-blue-50 text-blue-600 border-blue-200/50';
-                }
-
-                badgesHTML += `
-                    <span class="inline-flex items-center justify-center ${bgClass} border w-6 h-6 rounded-full shadow-sm shrink-0" title="${part}">
-                        <i class="${iconClass} text-xs"></i>
-                    </span>
-                `;
+            // Toplam planlanmış gün sayısı
+            let totalPlans = 0;
+            matrixData.forEach(row => {
+                row.planStates.forEach(state => { if (state) totalPlans++; });
             });
-            badgesHTML += '</div>';
-            return badgesHTML;
+            document.getElementById('dash-total-plans').textContent = totalPlans;
+            
+            const totalCells = matrixData.length * timelineDates.length;
+            const percentage = totalCells > 0 ? Math.round((totalPlans / totalCells) * 100) : 0;
+            
+            document.getElementById('dash-percentage').textContent = `${percentage}%`;
+            document.getElementById('dash-bar').style.width = `${percentage}%`;
         }
 
-        // --- 6. MATRİS OLUŞTURMA FONKSİYONLARI ---
-
-        // Tarih Sütun Başlıklarını Dinamik ve Gerçek Sütun (TH) Olarak Ekle (Hizalama Sorunu Çözümü)
-        function buildMatrixHeaders() {
-            const headerRow = document.getElementById('matrix-header-row');
+        // --- 5. DİNAMİK SÜTUN FİLTRELEME & HİZALAMA ---
+        function toggleColumn(columnName) {
+            if (columnName === 'branch') {
+                showBranch = !showBranch;
+            } else if (columnName === 'instagram') {
+                showInstagram = !showInstagram;
+            }
             
-            // Mevcut tarih hücreleri varsa temizle (Sabit kolonlardan sonrakileri uçur)
-            headerRow.querySelectorAll('.date-th-cell').forEach(el => el.remove());
+            updateColumnLayout();
+        }
+
+        function updateColumnLayout() {
+            // Kolon görünürlük sınıflarını ayarla
+            const branchElements = document.querySelectorAll('.col-branch');
+            const instagramElements = document.querySelectorAll('.col-instagram');
+            
+            branchElements.forEach(el => {
+                if (showBranch) el.style.display = '';
+                else el.style.display = 'none';
+            });
+            
+            instagramElements.forEach(el => {
+                if (showInstagram) el.style.display = '';
+                else el.style.display = 'none';
+            });
+            
+            // Sabit Sütunların left (soldan yapışma) konumlarını yeniden hesapla
+            // index (col 0): width is 40px, always visible, left is 0px
+            // branch (col 1): width is 80px, if visible left is 40px
+            // instagram (col 2): width is 200px, if visible left is 40px + (showBranch ? 80 : 0)
+            const leftInstagram = 40 + (showBranch ? 80 : 0);
+            const instagramStickyElements = document.querySelectorAll('.col-instagram-sticky');
+            instagramStickyElements.forEach(el => {
+                el.style.left = `${leftInstagram}px`;
+            });
+            
+            // club (col 3): width is 220px, left is 40 + (showBranch ? 80 : 0) + (showInstagram ? 200 : 0)
+            const leftClub = 40 + (showBranch ? 80 : 0) + (showInstagram ? 200 : 0);
+            const clubStickyElements = document.querySelectorAll('.col-club-sticky');
+            clubStickyElements.forEach(el => {
+                el.style.left = `${leftClub}px`;
+            });
+
+            // Buton Tasarımlarını güncelle
+            const btnBranch = document.getElementById('toggle-btn-branch');
+            const iconBranch = document.getElementById('toggle-icon-branch');
+            if (showBranch) {
+                btnBranch.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border shadow-sm select-none bg-indigo-50 border-indigo-200 text-indigo-700";
+                iconBranch.className = "ph-bold ph-eye text-sm";
+            } else {
+                btnBranch.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border shadow-sm select-none bg-slate-100 border-slate-200 text-slate-400";
+                iconBranch.className = "ph-bold ph-eye-slash text-sm";
+            }
+
+            const btnInstagram = document.getElementById('toggle-btn-instagram');
+            const iconInstagram = document.getElementById('toggle-icon-instagram');
+            if (showInstagram) {
+                btnInstagram.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border shadow-sm select-none bg-indigo-50 border-indigo-200 text-indigo-700";
+                iconInstagram.className = "ph-bold ph-eye text-sm";
+            } else {
+                btnInstagram.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border shadow-sm select-none bg-slate-100 border-slate-200 text-slate-400";
+                iconInstagram.className = "ph-bold ph-eye-slash text-sm";
+            }
+        }
+
+        // --- 6. BRANŞ İKON OLUŞTURUCU ---
+        function getBranchIconsHTML(branchStr) {
+            if (!branchStr) return '';
+            const branches = branchStr.toUpperCase().split('/').map(b => b.trim());
+            let html = '<div class="flex items-center gap-1 justify-start">';
+            
+            branches.forEach(b => {
+                if (b.includes('BASKETBOL')) {
+                    html += `<span class="w-5 h-5 rounded-full bg-orange-50 flex items-center justify-center border border-orange-100 shrink-0" title="Basketbol"><i class="ph-fill ph-basketball text-orange-500 text-xs"></i></span>`;
+                } else if (b.includes('VOLEYBOL')) {
+                    html += `<span class="w-5 h-5 rounded-full bg-emerald-50 flex items-center justify-center border border-emerald-100 shrink-0" title="Voleybol"><i class="ph-fill ph-volleyball text-emerald-500 text-xs"></i></span>`;
+                } else if (b.includes('FUTBOL')) {
+                    html += `<span class="w-5 h-5 rounded-full bg-blue-50 flex items-center justify-center border border-blue-100 shrink-0" title="Futbol"><i class="ph-fill ph-soccer-ball text-blue-500 text-xs"></i></span>`;
+                } else if (b.includes('YÜZME')) {
+                    html += `<span class="w-5 h-5 rounded-full bg-cyan-50 flex items-center justify-center border border-cyan-100 shrink-0" title="Yüzme"><i class="ph-fill ph-waves text-cyan-500 text-xs"></i></span>`;
+                } else if (b.includes('CİMNASTİK') || b.includes('CIMNASTİK')) {
+                    html += `<span class="w-5 h-5 rounded-full bg-purple-50 flex items-center justify-center border border-purple-100 shrink-0" title="Cimnastik"><i class="ph-fill ph-sparkles text-purple-500 text-xs"></i></span>`;
+                } else {
+                    html += `<span class="w-5 h-5 rounded-full bg-slate-50 flex items-center justify-center border border-slate-100 shrink-0" title="${b}"><i class="ph-bold ph-trophy text-slate-400 text-xs"></i></span>`;
+                }
+            });
+            
+            html += '</div>';
+            return html;
+        }
+
+        // --- 7. TABLO RENDER İŞLEMLERİ ---
+        function buildMatrixHeaders() {
+            const tableRow = document.querySelector('#matrix-main-table thead tr');
+            
+            // Mevcut dinamik tarihleri temizle (varsa)
+            const oldHeaders = tableRow.querySelectorAll('.dynamic-date-header');
+            oldHeaders.forEach(el => el.remove());
 
             timelineDates.forEach(date => {
-                const headerStyle = date.isWeekend 
-                    ? 'bg-amber-50 text-amber-950 border-amber-200/40' 
-                    : 'bg-slate-50 text-slate-800 border-slate-200/40';
-
-                const dayNameColor = date.isWeekend ? 'text-amber-600' : 'text-slate-400';
-
+                const isWeekend = date.isWeekend;
+                const weekendClass = isWeekend ? 'bg-amber-50/50 text-amber-600' : 'bg-slate-50/50 text-slate-600';
+                const borderClass = 'border-r border-slate-200';
+                
                 const th = document.createElement('th');
-                // Genişlik w-8 (32px) olarak daraltıldı, dikey paddingler py-1'e çekildi
-                th.className = `date-th-cell w-8 min-w-[32px] border-r border-b border-slate-200 text-center py-1 select-none ${headerStyle}`;
+                th.className = `dynamic-date-header w-8 min-w-[32px] max-w-[32px] h-20 p-0 text-center text-[10px] font-bold shrink-0 select-none ${weekendClass} ${borderClass}`;
                 th.innerHTML = `
-                    <div class="flex flex-col items-center justify-center">
-                        <span class="text-[7px] font-extrabold text-slate-400 uppercase tracking-widest leading-none">${date.monthName}</span>
-                        <span class="text-[10px] font-black tracking-tight my-0.5 leading-none">${date.day}</span>
-                        <span class="text-[8px] font-bold ${dayNameColor} leading-none">${date.weekday}</span>
+                    <div class="flex flex-col items-center justify-between h-full py-1.5">
+                        <span class="text-[8px] uppercase tracking-wide opacity-70">${date.month}</span>
+                        <span class="text-xs font-bold leading-none">${date.day}</span>
+                        <span class="text-[8px] font-semibold opacity-85 ${isWeekend ? 'text-amber-500' : 'text-slate-400'}">${date.weekday}</span>
                     </div>
                 `;
-                headerRow.appendChild(th);
+                tableRow.appendChild(th);
             });
         }
 
-        // Satırları Oluştur (Branş Rozetleri ve Sarı Hücre Alanları ile Birlikte)
         function renderMatrixRows(data) {
             const tbody = document.getElementById('matrix-rows');
             tbody.innerHTML = '';
 
             data.forEach((row, rowIndex) => {
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50/50 transition-colors";
+                tr.className = "hover:bg-slate-50/50 transition-colors h-8";
 
-                // 1. Sıra No (Sticky left-0, w-10)
-                const tdNum = document.createElement('td');
-                tdNum.className = "sticky-col w-10 min-w-[40px] px-1 py-1.5 text-center font-bold text-slate-400 border-r border-b border-slate-200 bg-slate-100 sticky left-0 z-20";
-                tdNum.textContent = rowIndex + 1;
-                tr.appendChild(tdNum);
+                // Sıra hücresi
+                const tdIndex = document.createElement('td');
+                tdIndex.className = "w-10 min-w-[40px] text-center font-bold text-slate-400 border-r border-slate-200 bg-slate-100 sticky left-0 z-10 select-none h-8 py-0";
+                tdIndex.textContent = rowIndex + 1;
+                tr.appendChild(tdIndex);
 
-                // 2. Branş İkonları (Sticky left-10, w-24, sola yaslı)
+                // Branş hücresi
                 const tdBranch = document.createElement('td');
-                tdBranch.className = "sticky-col w-24 min-w-[96px] px-2.5 py-1.5 border-r border-b border-slate-200 bg-[#FFFDE7] sticky left-10 z-20 text-left";
-                tdBranch.innerHTML = getBranchOnlyIcons(row.branch);
+                tdBranch.className = "col-branch w-20 min-w-[80px] border-r border-slate-200 bg-white sticky left-10 z-10 px-2 h-8 py-0";
+                tdBranch.innerHTML = getBranchIconsHTML(row.branch);
                 tr.appendChild(tdBranch);
 
-                // 3. Instagram Hesabı (Sticky left-[136px], w-56, sola yaslı)
+                // Instagram hücresi
                 const tdInstagram = document.createElement('td');
-                tdInstagram.className = "sticky-col w-56 min-w-[224px] px-3 py-1.5 font-semibold text-blue-600 underline border-r border-b border-slate-200 bg-white sticky left-[136px] z-20 truncate text-left";
-                tdInstagram.innerHTML = `
-                    <a href="https://instagram.com/${row.link}" target="_blank" class="flex items-center gap-1.5 hover:text-blue-800 transition-colors justify-start">
-                        <i class="ph ph-instagram-logo text-sm text-pink-500 shrink-0"></i>
-                        <span class="truncate text-xs">${row.link}</span>
-                    </a>
-                `;
+                tdInstagram.className = "col-instagram col-instagram-sticky w-[200px] min-w-[200px] border-r border-slate-200 bg-white sticky z-10 px-3 truncate text-left text-[11px] font-medium text-indigo-600 hover:text-indigo-800 h-8 py-0";
+                if (row.link && row.link !== "-") {
+                    tdInstagram.innerHTML = `<a href="https://instagram.com/${row.link}" target="_blank" class="flex items-center gap-1"><i class="ph ph-instagram-logo text-xs"></i> @${row.link}</a>`;
+                } else {
+                    tdInstagram.innerHTML = `<span class="text-slate-400">-</span>`;
+                }
                 tr.appendChild(tdInstagram);
 
-                // 4. Kulüp / Takım Adı (Sticky left-[360px], w-56, sola yaslı)
+                // Kulüp Adı hücresi
                 const tdClub = document.createElement('td');
-                tdClub.className = "sticky-col w-56 min-w-[224px] px-3 py-1.5 font-extrabold text-[11px] border-r border-b border-slate-200 bg-[#FFFDE7] sticky left-[360px] z-20 truncate text-left";
+                tdClub.className = "col-club-sticky w-[220px] min-w-[220px] border-r border-slate-200 bg-[#FFFDE7] sticky z-10 px-3 truncate text-left font-bold text-slate-800 text-[11px] h-8 py-0";
                 tdClub.textContent = row.club;
                 tr.appendChild(tdClub);
 
-                // 5. Tarih Matris Hücreleri (Kaydırılabilir alan - Genişlikler w-8 / 32px'e çekildi, yükseklik h-8'e düşürüldü)
+                // Planlama hücreleri (31 Gün)
                 row.planStates.forEach((isPlanned, dateIndex) => {
-                    const isWeekend = timelineDates[dateIndex].isWeekend;
                     const tdCell = document.createElement('td');
-                    tdCell.className = "w-8 min-w-[32px] border-r border-b border-slate-200/80 transition-all text-center p-0";
+                    const isWeekend = timelineDates[dateIndex].isWeekend;
                     
-                    let bgClass = 'bg-white hover:bg-slate-100/50 cursor-pointer';
-                    let dotHTML = '';
-                    
-                    if (isPlanned) {
-                        bgClass = 'bg-[#3B82F6] hover:bg-blue-600 transition-colors cursor-pointer shadow-sm';
-                        dotHTML = `<div class="w-1.5 h-1.5 rounded-full bg-white mx-auto shadow-sm"></div>`;
-                    } else if (isWeekend) {
-                        bgClass = 'bg-amber-50/20 hover:bg-amber-100/30 cursor-pointer';
-                    }
+                    let bgClass = isPlanned ? 'bg-primary' : (isWeekend ? 'bg-amber-50/20' : 'bg-white');
+                    const borderClass = 'border-r border-slate-150';
 
-                    tdCell.className += ` ${bgClass}`;
-                    tdCell.innerHTML = `<div class="h-8 flex items-center justify-center">${dotHTML}</div>`;
+                    tdCell.className = `w-8 h-8 min-w-[32px] max-w-[32px] p-0 text-center ${borderClass} ${bgClass} cursor-pointer hover:opacity-85 active:scale-95 transition-all`;
                     tdCell.onclick = () => toggleCell(rowIndex, dateIndex);
                     
+                    // Hücre içinde küçük bir nokta gösterimi (Planlıysa beyaz nokta)
+                    if (isPlanned) {
+                        tdCell.innerHTML = `<div class="w-1.5 h-1.5 bg-white rounded-full mx-auto"></div>`;
+                    } else {
+                        tdCell.innerHTML = ``;
+                    }
                     tr.appendChild(tdCell);
                 });
 
                 tbody.appendChild(tr);
             });
+
+            // Sütun hizalama mesafelerini çalıştır
+            updateColumnLayout();
         }
 
-        // Hücre Aktif/Pasif Yapıcı (Görsel Matris Etkileşimi)
         function toggleCell(rowIndex, dateIndex) {
             matrixData[rowIndex].planStates[dateIndex] = !matrixData[rowIndex].planStates[dateIndex];
             renderMatrixRows(matrixData);
         }
 
-        // Matris Arama Filtresi
         function filterMatrix() {
-            const term = document.getElementById('matrix-search').value.toLowerCase();
+            const term = document.getElementById('matrix-search').value.toLowerCase().trim();
+            if (!term) {
+                renderMatrixRows(matrixData);
+                return;
+            }
             const filtered = matrixData.filter(row => 
                 row.club.toLowerCase().includes(term) || 
                 row.branch.toLowerCase().includes(term) || 
@@ -567,7 +759,106 @@
             renderMatrixRows(filtered);
         }
 
-        // --- 7. İŞLEM GEÇMİŞİ LOGLARI ---
+        // --- 8. YENİ KULÜP EKLEME İŞLEMLERİ (MODAL) ---
+        function openAddModal() {
+            const modal = document.getElementById('add-modal');
+            const content = document.getElementById('add-modal-content');
+            
+            // Formu sıfırla
+            document.getElementById('new-club-name').value = '';
+            document.getElementById('new-club-ig').value = '';
+            selectedBranches.clear();
+            document.querySelectorAll('.branch-select-btn').forEach(btn => {
+                btn.classList.remove('ring-2', 'ring-primary', 'bg-indigo-50', 'border-primary');
+            });
+
+            modal.classList.remove('hidden');
+            // Kısa bir gecikme ile animasyonu tetikle
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeAddModal() {
+            const modal = document.getElementById('add-modal');
+            const content = document.getElementById('add-modal-content');
+            
+            modal.classList.add('opacity-0');
+            content.classList.add('scale-95');
+            
+            // Animasyon bitiminde gizle
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function setupBranchSelectors() {
+            document.querySelectorAll('.branch-select-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const branch = e.currentTarget.dataset.branch;
+                    if (selectedBranches.has(branch)) {
+                        selectedBranches.delete(branch);
+                        e.currentTarget.classList.remove('ring-2', 'ring-primary', 'bg-indigo-50', 'border-primary');
+                    } else {
+                        selectedBranches.add(branch);
+                        e.currentTarget.classList.add('ring-2', 'ring-primary', 'bg-indigo-50', 'border-primary');
+                    }
+                });
+            });
+        }
+
+        function addNewClub() {
+            const nameInput = document.getElementById('new-club-name').value.trim();
+            let igInput = document.getElementById('new-club-ig').value.trim();
+            
+            if (!nameInput) {
+                showToast("Lütfen kulüp/takım adını giriniz.");
+                return;
+            }
+
+            // Branşları birleştir (Eğer seçilmediyse varsayılan GENEL)
+            let branchStr = Array.from(selectedBranches).join(' / ');
+            if (!branchStr) branchStr = "GENEL";
+
+            // IG formatı
+            if (!igInput) igInput = "-";
+            if (igInput.startsWith('@')) igInput = igInput.substring(1);
+
+            // Yeni Kulüp Objessi
+            const newClub = {
+                id: matrixData.length > 0 ? Math.max(...matrixData.map(t => t.id)) + 1 : 1,
+                branch: branchStr,
+                link: igInput,
+                club: nameInput.toUpperCase(),
+                planRange: [0, 0], // Varsayılan boş
+                planStates: Array(timelineDates.length).fill(false)
+            };
+
+            // Veriye ekle ve tabloyu güncelle
+            matrixData.push(newClub);
+            renderMatrixRows(matrixData);
+            
+            // Loglara Ekle
+            logsData.unshift({
+                team: newClub.club,
+                action: "Yeni kulüp sisteme eklendi.",
+                time: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
+                date: new Date().toLocaleDateString('tr-TR', { month: 'long', day: 'numeric', year: 'numeric' })
+            });
+            renderLogs();
+
+            // Kapat ve Bildirim Ver
+            closeAddModal();
+            showToast(`${newClub.club} başarıyla eklendi!`);
+            
+            // Sütun genişlikleri için en alta scroll yap
+            setTimeout(() => {
+                document.querySelector('.custom-scrollbar').scrollTop = document.querySelector('.custom-scrollbar').scrollHeight;
+            }, 100);
+        }
+
+        // --- 9. İŞLEM GEÇMİŞİ LOGLARI ---
         function renderLogs() {
             const tbody = document.getElementById('logs-list');
             tbody.innerHTML = '';
@@ -575,21 +866,21 @@
             logsData.forEach(log => {
                 const trHTML = `
                     <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="px-5 py-2 whitespace-nowrap">
-                            <div class="flex items-center gap-2">
-                                <div class="bg-indigo-50 p-1.5 rounded-lg text-primary">
+                        <td class="px-5 py-3 whitespace-nowrap">
+                            <div class="flex items-center gap-2.5">
+                                <div class="bg-indigo-50 p-2 rounded-lg text-primary">
                                     <i class="ph-bold ph-activity text-sm"></i>
                                 </div>
                                 <span class="font-bold text-slate-800">${log.team}</span>
                             </div>
                         </td>
-                        <td class="px-5 py-2">
-                            <span class="text-slate-600 font-medium">${log.action}</span>
+                        <td class="px-5 py-3 text-slate-600 font-medium">
+                            ${log.action}
                         </td>
-                        <td class="px-5 py-2 whitespace-nowrap text-slate-500">
+                        <td class="px-5 py-3 whitespace-nowrap text-slate-500">
                             ${log.date}
                         </td>
-                        <td class="px-5 py-2 whitespace-nowrap text-right font-semibold text-slate-700">
+                        <td class="px-5 py-3 whitespace-nowrap text-right font-semibold text-slate-700">
                             ${log.time}
                         </td>
                     </tr>
@@ -598,7 +889,7 @@
             });
         }
 
-        // --- 8. SENKRONİZASYON VE KAYDETME EFEKTİ ---
+        // --- 10. GOOGLE SHEETS ASENKRON SAKLAMA EFEKTİ ---
         function saveMatrixData() {
             const btn = document.getElementById('btn-save-matrix');
             const icon = document.getElementById('save-icon');
@@ -608,7 +899,7 @@
             btn.classList.add('opacity-90', 'pointer-events-none');
             icon.classList.add('hidden');
             loader.classList.remove('hidden');
-            text.textContent = "Gönderiliyor...";
+            text.textContent = "Kaydediliyor...";
 
             setTimeout(() => {
                 btn.classList.remove('opacity-90', 'pointer-events-none');
@@ -618,17 +909,19 @@
 
                 showToast("Matris verileri Google Sheet ile senkronize edildi!");
 
+                // Yeni log girdisi ekle
                 logsData.unshift({
                     team: "Tüm Kulüpler",
-                    action: "Matris planlaması Google Sheet'e yazdırıldı.",
+                    action: "Değişiklikler Google Sheet'e aktarıldı.",
                     time: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
-                    date: "27 Mayıs 2026"
+                    date: new Date().toLocaleDateString('tr-TR', { month: 'long', day: 'numeric', year: 'numeric' })
                 });
                 renderLogs();
 
             }, 1200);
         }
 
+        // Toast Bildirimi
         function showToast(msg) {
             const toast = document.getElementById('toast');
             document.getElementById('toast-message').textContent = msg;
